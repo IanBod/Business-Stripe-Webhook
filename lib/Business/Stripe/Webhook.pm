@@ -123,7 +123,7 @@ sub check_signature {
     my $signed_payload = $sig_head{'t'} . '.' . $self->{'payload'};
     
     if (!defined $sig_head{'v1'}) {
-        $self->_error("No v1");
+        $self->_error("No v1 Parameter");
         return undef;
     }
     
@@ -157,6 +157,8 @@ sub reply {
 sub get_subscription {
     my ($self, $subscription, $secret) = @_;
     
+    $self->{'error'} = '';
+
     if (!$subscription) {
         $self->{'error'} = 'Subscription missing';
         $self->_error('Subscription missing');
@@ -400,6 +402,8 @@ This method processes the webhook sent from Stripe.  It checks the Stripe Signat
 This method takes no parameters.
 
 Normally, the return value can be ignored.  Returns C<undef> if there was an error or warning.
+
+If the C<v1> parameter is missing an C<error> is set and the method returns C<undef>.  Otherwise it returns true is the signature has been verified or false if not.
 
 =head2 check_signature
 
