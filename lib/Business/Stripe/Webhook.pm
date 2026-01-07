@@ -8,7 +8,7 @@ use HTTP::Tiny;
 use strict;
 use warnings;
 
-our $VERSION = '1.12';
+our $VERSION = '1.13';
 $VERSION = eval $VERSION;
 
 sub new {
@@ -221,16 +221,16 @@ Business::Stripe::Webhook - A Perl module for handling webhooks sent by Stripe
 
 =head1 VERSION
 
-Version 1.12
+Version 1.13
 
 =head1 SYNOPSIS
 
-  use Stripe::Webhook;
+  use Business::Stripe::Webhook;
   
   my $payload;
   read(STDIN, $payload, $ENV{'CONTENT_LENGTH'});
 
-  my $webhook = Stripe::Webhook->new(
+  my $webhook = Business::Stripe::Stripe::Webhook->new(
       signing_secret                => 'whsec_...',
       api_secret                    => 'sk_test_...',
       payload                       => $payload,
@@ -268,7 +268,7 @@ This module is designed to run on a webserver as that is where Stripe webhooks w
 
 The typical workflow for L<Business::Stripe::Webhook> is to initally create an instance of the module and to define one or more Stripe events to listen for.  This is done by providing references to your subroutines as part of the C<new> method.  Note that the webhook events you want to listen for need to be enabled in the Stripe Dashboard.
 
-  my $webhook = Stripe::Webhook->new(
+  my $webhook = Business::Stripe::Webhook->new(
       invoice-paid => \&sub_to_handle_paid_invoice,
   );
 
@@ -290,9 +290,9 @@ This produces a fully formed HTTP Response complete with headers as required by 
 
 Stripe requires a timely reply to webhook calls.  Therefore, if you need to carry out any lengthy processing after the webhook has been sent, this should be done B<after> calling the C<reply> method and flushing C<STDOUT>
 
-  use Stripe::Webhook;
+  use Business::Stripe::Webhook;
   
-  my $webhook = Stripe::Webhook->new(
+  my $webhook = Business::Stripe::Webhook->new(
       signing_secret    => 'whsec_...',
       payload           => $payload,
       invoice-paid      => \&update_invoice,
@@ -318,7 +318,7 @@ Stripe requires a timely reply to webhook calls.  Therefore, if you need to carr
 
 By default, any errors or warnings are sent to C<STDERR>.  These can be altered to instead go to your own subroutine to handle errors and/or warnings by defining these when create the object.
 
-  my $webhook = Stripe::Webhook->new(
+  my $webhook = Business::Stripe::Webhook->new(
       invoice-paid => \&sub_to_handle_paid_invoice,
       error        => \&my_error_handler,
       warning      => \&my_warning_handler,
@@ -330,9 +330,9 @@ Additionally, warnings can be turned off by setting the C<warning> parameter to 
 
 =head2 new
 
-Creates a new Stripe::Webhook object.
+Creates a new Business::Stripe::Webhook object.
 
-  my $webhook = Stripe::Webhook->new(
+  my $webhook = Business::Stripe::Webhook->new(
       signing_secret => 'whsec_...',
       payload        => $payload,
   );
@@ -563,10 +563,11 @@ Thanks to the help and support provided by members of Perl Monks L<https://perlm
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2023 by Ian Boddison.
+This software is copyright (c) 2023-2026 by Ian Boddison.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
+
 
