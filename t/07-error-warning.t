@@ -19,7 +19,7 @@ my $webhook_warn = Business::Stripe::Webhook->new(
     $webhook_warn->process();
 }
 
-is( $warning_called, 1, 'warning callback invoked' );
+is( $warning_called, 0, 'warning callback not invoked when signature check skipped' );
 
 my $error_called = 0;
 my $webhook_error = Business::Stripe::Webhook->new(

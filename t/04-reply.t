@@ -30,13 +30,13 @@ $webhook->process();
 
 ok( $handled, 'callback ran' );
 
-my $output = capture_reply($webhook, status => 'ok');
+my $output = capture_reply($webhook);
 ok( $output =~ /\AContent-type: application\/json\n\n/s, 'reply includes content-type header' );
 
 my (undef, $body) = split(/\n\n/, $output, 2);
 my $data = decode_json($body);
 
-is( $data->{'status'}, 'ok', 'status overridden via reply args' );
+is( $data->{'status'}, 'noaction', 'default status is noaction' );
 is_deeply( $data->{'sent_to'}, ['invoice-paid'], 'sent_to includes handler' );
 is( $data->{'sent_to_all'}, 'false', 'sent_to_all defaults to false' );
 like( $data->{'timestamp'}, qr/\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\z/, 'timestamp present' );

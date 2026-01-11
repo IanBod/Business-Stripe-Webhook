@@ -15,6 +15,9 @@ sub new {
     my $class = shift;
     my %vars = @_;
 
+    if (exists $vars{'error'} && ref $vars{'error'} eq 'CODE') {
+        $vars{'error_callback'} = $vars{'error'};
+    }
     $vars{'error'}      = '';
 
     $vars{'reply'}      =  {
@@ -66,12 +69,11 @@ sub process {
         return undef;
     }
 
-    if (!$ENV{'HTTP_STRIPE_SIGNATURE'}) {
-        $self->_warning('Stripe-Signature HTTP heading missing - the request is not from Stripe');
-        return undef;        
-    }
-    
     if ($self->{'signing_secret'}) {
+        if (!$ENV{'HTTP_STRIPE_SIGNATURE'}) {
+            $self->_error('Stripe-Signature HTTP heading missing - the request is not from Stripe');
+            return undef;
+        }
         my $sig = $self->check_signature;
         return undef unless defined $sig;
         if (!$sig) {
@@ -89,7 +91,6 @@ sub process {
     
     $hook_type =~ s/\./-/g;
     if (exists $self->{$hook_type}) {
-        $self->{'reply'}->{'status'} = 'success';
         push @{$self->{'reply'}->{'sent_to'}}, $hook_type; 
         &{$self->{$hook_type}}($self->{'webhook'});
     }
@@ -200,8 +201,8 @@ sub _error {
     my ($self, $message) = @_;
     
     $self->{'error'} = $message;
-    if (defined &{$self->{'error'}}) {
-        &{$self->{'error'}}($message);
+    if (defined $self->{'error_callback'}) {
+        &{$self->{'error_callback'}}($message);
     } else {
         STDERR->print("Stripe Webhook Error: $message\n");
     }
