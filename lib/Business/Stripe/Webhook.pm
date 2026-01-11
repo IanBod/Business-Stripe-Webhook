@@ -120,10 +120,21 @@ sub check_signature {
     }
     
     my %sig_head = ($ENV{'HTTP_STRIPE_SIGNATURE'} . ',') =~ /(\S+?)=(\S+?),/g;
+
+    if (!defined $sig_head{'t'}) {
+        $self->_error("No t Parameter");
+        return undef;
+    }
+
     my $signed_payload = $sig_head{'t'} . '.' . $self->{'payload'};
-    
+
     if (!defined $sig_head{'v1'}) {
         $self->_error("No v1 Parameter");
+        return undef;
+    }
+
+    if (defined $self->{'tolerance'} && abs(time - $sig_head{'t'}) > $self->{'tolerance'}) {
+        $self->_error("Timestamp outside tolerance");
         return undef;
     }
     
