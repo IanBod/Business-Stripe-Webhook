@@ -23,8 +23,13 @@ my %WriteMakefileArgs = (
         'Digest::SHA'   	=> '5.94',
         'Time::Piece'    	=> '1.20',
     },
-    dist  => { COMPRESS => q{perl -MIO::Compress::Gzip=gzip,:constants -e "my $$in = $$ARGV[0]; gzip($$in => qq($$in.gz), q(Level) => Z_BEST_COMPRESSION, q(BinModeIn) => 1) or die q(gzip failed); unlink $$in;"}, SUFFIX => 'gz', },
-#    clean => { FILES => 'Business-Stripe-Webhook-*' },
+    dist => {
+        COMPRESS => 'gzip -9vf',
+        SUFFIX   => 'gz',
+    },
+
+#    dist  => { COMPRESS => q{perl -MIO::Compress::Gzip=gzip,:constants -e "my $$in = $$ARGV[0]; gzip($$in => qq($$in.gz), q(Level) => Z_BEST_COMPRESSION, q(BinModeIn) => 1) or die q(gzip failed); unlink $$in;"}, SUFFIX => 'gz', },
+    clean => { FILES => 'Business-Stripe-Webhook-*' },
 );
 
 # Compatibility with old versions of ExtUtils::MakeMaker
@@ -46,5 +51,6 @@ delete $WriteMakefileArgs{LICENSE}
     unless eval { ExtUtils::MakeMaker->VERSION('6.31'); 1 };
 
 WriteMakefile(%WriteMakefileArgs);
+
 
 
