@@ -8,7 +8,7 @@ use HTTP::Tiny;
 use strict;
 use warnings;
 
-our $VERSION = '1.13';
+our $VERSION = '1.14';
 $VERSION = eval $VERSION;
 
 sub new {
@@ -234,7 +234,7 @@ Business::Stripe::Webhook - A Perl module for handling webhooks sent by Stripe
 
 =head1 VERSION
 
-Version 1.13
+Version 1.14
 
 =head1 SYNOPSIS
 
