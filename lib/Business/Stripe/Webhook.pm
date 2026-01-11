@@ -96,6 +96,7 @@ sub process {
    
     if (exists $self->{'all-webhooks'}) {
         $self->{'reply'}->{'sent_to_all'} = 'true';
+        push @{$self->{'reply'}->{'sent_to'}}, 'all-webhooks';
         &{$self->{'all-webhooks'}}($self->{'webhook'});
     }
 
