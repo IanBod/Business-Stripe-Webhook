@@ -34,6 +34,21 @@ my $webhook_error = Business::Stripe::Webhook->new(
 
 is( $error_called, 1, 'error callback invoked' );
 
+my $stderr_error_output = '';
+my $webhook_noerror = Business::Stripe::Webhook->new(
+    payload        => $payload,
+    signing_secret => 'whsec_test',
+);
+{
+    local $ENV{'HTTP_STRIPE_SIGNATURE'} = 't=123,v1=invalid';
+    open my $stderr, '>', \$stderr_error_output or die "open stderr: $!";
+    local *STDERR = $stderr;
+    $webhook_noerror->process();
+}
+
+like( $stderr_error_output, qr/Stripe Webhook Error: Invalid Stripe Signature/,
+    'error emitted when no error callback provided' );
+
 my $nowarn_callback_called = 0;
 my $stderr_output = '';
 my $webhook_nowarn = Business::Stripe::Webhook->new(
